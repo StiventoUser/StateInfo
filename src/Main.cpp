@@ -111,13 +111,15 @@ int main()
 		/*
 		Output:
 
-		Full  message: "foo3 is failed" with variables: [
-			info2 = (Info) : {value.Name = (std::string) : {AbcTest}, value.Version = 128, value.Precision = 0.020000, value.IsActive = true},
-			info3 = (from pointer) (Info) : {value.Name = (std::string) : {AbcTest}, value.Version = 128, value.Precision = 0.020000, value.IsActive = true}]
-				which is caused by: "foo2 is failed" with variables: 
-				[str = (std::string) : {foo2 string var}, floatAcc = 9.800000, maxVel = 500.015000, pVal = null] 
-					which is caused by: "foo1 is failed" with variables: 
-					[i1 = 50, b1 = true, i2 = 50, b3 = (from pointer) true, ch = 103, str = (from pointer) qwerty]
+		Full  message: Full  message: "foo3 is failed" at C:\Development\Projects\StateInfo\src\Main.cpp:93 with variables: 
+		[info2 = (Info) : {value.Name = (std::string) : {AbcTest}, value.Version = 128, value.Precision = 0.020000, value.IsActive = true}, 
+		info3 = (from pointer) (Info) : {value.Name = (std::string) : {AbcTest}, value.Version = 128, value.Precision = 0.020000, value.IsActive = true}] 
+			which is caused by:
+			"foo2 is failed" at C:\Development\Projects\StateInfo\src\Main.cpp:72 with variables:
+			[str = (std::string) : {foo2 string var}, floatAcc = 9.800000, maxVel = 500.015000, pVal = null] 
+				which is caused by:
+				"foo1 is failed" at C:\Development\Projects\StateInfo\src\Main.cpp:49 with variables:
+				[i1 = 50, b1 = true, i2 = 50, b3 = (from pointer) true, ch = 103, str = (from pointer) qwerty]
 
 		Short message: foo3 is failed
 		*/

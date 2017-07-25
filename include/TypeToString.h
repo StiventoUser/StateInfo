@@ -3,13 +3,17 @@
 namespace StateInfo
 {
 
-//! An alias of type with removed reference, const, volatile.
-template<typename T>
-using RemoveRefCv_T = std::remove_cv_t<std::remove_reference_t<T>>;
+namespace Internal
+{
+
+//! Max number of elements in a sequence that displayed in exception.
+constexpr const size_t MaxSequenceDisplayLength = 10;
+
+} // namespace Internal
 
 //! An alias of type that exists if 2 types are same (with ignored qualifiers)
 template<typename T, typename ExpectedT>
-using EnableIfSame_T = std::enable_if_t<std::is_same<RemoveRefCv_T<T>, RemoveRefCv_T<ExpectedT>>::value>;
+using EnableIfSame_T = std::enable_if_t<std::is_same<std::decay_t<T>, std::decay_t<ExpectedT>>::value>;
 
 //
 // Declaration of the TypeToString class.
@@ -41,8 +45,8 @@ class ClassToString
 //
 
 template<typename T>
-class TypeToString<T, std::enable_if_t<std::is_arithmetic<RemoveRefCv_T<T>>::value &&
-	!std::is_same<RemoveRefCv_T<T>, bool>::value >>
+class TypeToString<T, std::enable_if_t<std::is_arithmetic<std::decay_t<T>>::value
+	&& !std::is_same<std::decay_t<T>, bool>::value >>
 {
 public:
 	static std::string Cast(const T& value)
@@ -72,8 +76,9 @@ public:
 //
 
 template<typename T>
-class TypeToString<T, std::enable_if_t<std::is_pointer<RemoveRefCv_T<T>>::value
-	&& !std::is_same<RemoveRefCv_T<T>, const char*>::value>>
+class TypeToString<T, std::enable_if_t<std::is_pointer<std::decay_t<T>>::value
+	&& !std::is_same<std::decay_t<T>, char*>::value
+	&& !std::is_same<std::decay_t<T>, const char*>::value>>
 {
 public:
 	static std::string Cast(const T& value)
@@ -93,7 +98,8 @@ public:
 //
 
 template<typename T>
-class TypeToString<T, std::enable_if_t<std::is_same<RemoveRefCv_T<T>, const char*>::value>>
+class TypeToString<T, std::enable_if_t<std::is_same<std::decay_t<T>, char*>::value
+	|| std::is_same<std::decay_t<T>, const char*>::value>>
 {
 public:
 	static std::string Cast(const T& value)
@@ -113,15 +119,15 @@ public:
 // 
 
 template<typename T>
-class TypeToString<T, std::enable_if_t<std::is_class<RemoveRefCv_T<T>>::value>>
+class TypeToString<T, std::enable_if_t<std::is_class<std::decay_t<T>>::value>>
 {
 public:
 	static std::string Cast(const T& value)
 	{
 		std::string resStr;
 
-		resStr.append("(").append(ClassToString<RemoveRefCv_T<T>>::GetClassName())
-			.append(") : {").append(ClassToString<RemoveRefCv_T<T>>::GetValue(value)).append("}");
+		resStr.append("(").append(ClassToString<std::decay_t<T>>::GetClassName())
+			.append(") : {").append(ClassToString<std::decay_t<T>>::GetValue(value)).append("}");
 
 		return resStr;
 	}
@@ -143,6 +149,43 @@ public:
 	static std::string GetValue(const std::string& value)
 	{
 		return value;
+	}
+};
+
+template<typename T>
+class ClassToString<std::vector<T>>
+{
+public:
+	static std::string GetClassName()
+	{
+		return "std::vector<T>";
+	}
+
+	static std::string GetValue(const std::vector<T>& value)
+	{
+		std::string resStr;
+
+		resStr.append("[");
+
+		if (!value.empty())
+		{
+			resStr += TypeToString<T>::Cast(value[0]);
+
+			size_t i = 1;
+			for (; i < value.size() && i < Internal::MaxSequenceDisplayLength; ++i)
+			{
+				resStr.append(", ").append(TypeToString<T>::Cast(value[i]));
+			}
+
+			if (i != value.size())
+			{
+				resStr.append(", ...");
+			}
+		}
+		
+		resStr.append("]");
+
+		return resStr;
 	}
 };
 

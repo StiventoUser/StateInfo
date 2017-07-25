@@ -1,5 +1,6 @@
 #include <exception>
 #include <string>
+#include <vector>
 #include <type_traits>
 
 #include "StateException.h"
@@ -32,9 +33,9 @@ StateException& StateException::LockState()
 
 	if (!varsValues_.empty())
 	{
-		fullMessage_.append(" with variables: [")
+		fullMessage_.append(" with variables: [ ")
 			.append(varsValues_)
-			.append("]");
+			.append(" ]");
 	}
 	if (!nestedExceptionMessage_.empty())
 	{

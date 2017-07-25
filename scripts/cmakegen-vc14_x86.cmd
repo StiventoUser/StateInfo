@@ -5,7 +5,9 @@ pushd ..\cmake-build\vc14-x86
 
 cmake ^
 	-G"Visual Studio 14 2015" ^
-	"-DBUILD_WITH_STATIC_CRT:BOOL=ON" ^
+	"-DBUILD_WITH_STATIC_CRT:BOOL=ON" ^ ^
+	"-DBOOST_ROOT:PATH=%cd%/../../libs/boost" ^
+	"-DBOOST_LIBRARYDIR:PATH=%cd%/../../libs/boost/vc14-x64" ^
 	../..
 
 if errorlevel 1 goto :error
